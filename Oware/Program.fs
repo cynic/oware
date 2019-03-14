@@ -6,7 +6,7 @@ type StartingPosition =
  type Player=
       {
        houses: int*int*int*int*int*int
-       capturedSeeds: int 
+       capturedSeeds: int
       }
 
  type board =
@@ -28,7 +28,7 @@ let getSeeds n board = failwith "Not implemented"
 //and makes a move using
 //that house.
 let useHouse n board = failwith "Not implemented"
-      
+                      
             
 //-------------------------------------------------
 //start, which accepts a StartingPosition and returns 
@@ -37,14 +37,11 @@ let useHouse n board = failwith "Not implemented"
 let start position =
       
                 match position = North  with
-                | true -> { state= "north" ; northPlayer = {(7,8,9,10,11,12) }
-                | _ -> North
+                //| true -> { state= "north" ; northPlayer ={(7,8,9,10,11,12);0};southPlayer = _}
+                | true -> { state= "north" ; northPlayer = {(4,4,4,4,4,4)};southPlayer={(4,4,4,4,4,4)}
+                | _ ->  { state= "south" ;_; southPlayer ={(1,2,3,4,5,6); 0 }}
 
-                //  //let var n = 
-                  //            match n <= 6 with
-                  //            |true -> position = South 
-                  //            | _ -> position = North
-                  //var  
+              
                 
                    
 //score, which accepts a board and gives back a 
