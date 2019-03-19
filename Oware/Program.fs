@@ -4,12 +4,45 @@ type StartingPosition =
     | South
     | North
 
+type Player={
+houses : int*int*int*int*int*int
+captured : int}
 
+type states=
+|Draw of string
+|Win of string
+|Northturn 
+|Southturn
+
+type Board={
+    state : states
+    northplayer : Player
+    southplayer : Player
+    }
     //getSeeds, which accepts a house number and a board,
     //and returns the number of
     //seeds in the specified house
-let getSeeds n board = failwith "Not implemented"
-
+let getSeeds n board = // failwith "Not implemented"
+    match board.state=Northturn with
+    |true -> 
+        let (a,b,c,d,e,f) = board.northplayer.houses in 
+            match n with 
+            |1-> a
+            |2->b
+            |3->c
+            |4->d
+            |5->e
+            |6->f  
+            |_->failwith "Not implemented"
+    |_ -> let (a',b',c',d',e',f')= board.southplayer.houses in
+            match n with 
+            |7->a'
+            |8->b'
+            |9->c'
+            |10->d'
+            |11->e'
+            |12->f'
+            |_-> failwith "Not implemented"
 
 //useHouse, which accepts a house number and a board,
 //and makes a move using
@@ -19,8 +52,12 @@ let useHouse n board = failwith "Not implemented"
 //start, which accepts a StartingPosition and returns 
 //an initialized game where the person
 //in the StartingPosition starts the game
-let start position = failwith "Not implemented"
-
+let start position =
+    //*matching the position to the player to output a borad type
+    let reco={houses=(4,4,4,4,4,4);captured=0}
+    match position with
+    |North -> {state = Northturn ; northplayer = reco;southplayer=reco}
+    |South->  {state = Southturn ; northplayer = reco;southplayer = reco}
 
 //score, which accepts a board and gives back a 
 //tuple of (southScore , northScore)
