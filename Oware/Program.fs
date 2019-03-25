@@ -1,5 +1,7 @@
 ﻿module Oware
 
+open System
+
 type StartingPosition =
     | South
     | North
@@ -9,12 +11,14 @@ type StartingPosition =
        capturedSeeds: int
       }
 
- type board =
+ type Board =
       {
-           state : string
-           northPlayer : Player
-           southPlayer : Player
-           
+
+           houseNumber : int 
+           playersTurns : string // it's either south or north's turn
+           southLargeHouseHas : int
+           northLargeHousehas : int
+           initialSeeds : int*int*int*int*int*int*int*int*int*int*int*int
       }
                 
 
@@ -22,6 +26,7 @@ type StartingPosition =
     //and returns the number of
     //seeds in the specified house
 let getSeeds n board = failwith "Not implemented"
+                       
 
 
 //useHouse, which accepts a house number and a board,
@@ -35,11 +40,21 @@ let useHouse n board = failwith "Not implemented"
 //an initialized game where the person
 //in the StartingPosition starts the game
 let start position =
-      
-                match position = North  with
+
+      match position with
+      | North -> 
+               {houseNumber= Convert.ToInt32( System.Console.ReadLine()); playersTurns = "Nouth's turn"; southLargeHouseHas = 0;northLargeHousehas = 0; initialSeeds = (4,4,4,4,4,4,4,4,4,4,4,4) }   
+                
+      | South -> 
+                 let south = {houseNumber=Convert.ToInt32( System.Console.ReadLine()); playersTurns = "South's turn"; southLargeHouseHas = 0;northLargeHousehas = 0; initialSeeds = (4,4,4,4,4,4,4,4,4,4,4,4) }
+                 getSeeds (south.houseNumber)  (south.initialSeeds)
+
+//getSeeds Board.houseNumber Board.initialSeeds  
+
+               
                 //| true -> { state= "north" ; northPlayer ={(7,8,9,10,11,12);0};southPlayer = _}
-                | true -> { state= "north" ; northPlayer = {(4,4,4,4,4,4)};southPlayer={(4,4,4,4,4,4)}
-                | _ ->  { state= "south" ;_; southPlayer ={(1,2,3,4,5,6); 0 }}
+                //| true -> { state= "north" ; northPlayer = {(4,4,4,4,4,4)};southPlayer={(4,4,4,4,4,4)}
+                //| _ ->  { state= "south" ;_; southPlayer ={(1,2,3,4,5,6); 0 }}
 
               
                 
