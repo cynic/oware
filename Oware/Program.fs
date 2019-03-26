@@ -6,6 +6,7 @@ type StartingPosition =
 
 type Player={
 houses : int*int*int*int*int*int
+totalHouses :  int*int*int*int*int*int* int*int*int*int*int*int
 captured : int}
 
 type states=
@@ -23,9 +24,10 @@ type Board={
     //and returns the number of
     //seeds in the specified house
 let getSeeds n board = // failwith "Not implemented"
-    match board.state=Northturn with
-    |true -> 
-        let (a,b,c,d,e,f) = board.northplayer.houses in 
+    match board.state with
+    |Northturn | Southturn -> 
+        let (a',b',c',d',e',f')= board.southplayer.houses 
+        let (a,b,c,d,e,f) = board.northplayer.houses in
             match n with 
             |1-> a
             |2->b
@@ -33,9 +35,6 @@ let getSeeds n board = // failwith "Not implemented"
             |4->d
             |5->e
             |6->f  
-            |_->failwith "Not implemented"
-    |_ -> let (a',b',c',d',e',f')= board.southplayer.houses in
-            match n with 
             |7->a'
             |8->b'
             |9->c'
@@ -43,18 +42,40 @@ let getSeeds n board = // failwith "Not implemented"
             |11->e'
             |12->f'
             |_-> failwith "Not implemented"
+    |_-> failwith "Not implemented"
 
 //useHouse, which accepts a house number and a board,
 //and makes a move using
 //that house.
-let useHouse n board = failwith "Not implemented"
+let useHouse n board = // failwith "Not implemented"
+         let (a, b,c,d,e,f ) = board.southplayer.houses 
+         let (a',b',c',d',e',f')= board.northplayer.houses 
+         let k = board.southplayer in
+              match n with 
+            //  | 1 ->let v =  {k with houses = (a-4, b+1,c+1,d+1,e+1,f) } in
+            //             board
+              |1->{ board.southplayer.houses = (a-4, b+1,c+1,d+1,e+1,f)}
+                    board
+            //|2->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|3->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|4->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|5->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|6->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|7->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|8->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|9->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|10->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|11->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|12->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+              | _ ->  failwith "Not implemented"
+                     
 
 //start, which accepts a StartingPosition and returns 
 //an initialized game where the person
 //in the StartingPosition starts the game
 let start position =
     //*matching the position to the player to output a borad type
-    let reco={houses=(4,4,4,4,4,4);captured=0}
+    let reco={houses=(4,4,4,4,4,4);captured=0;totalHouses=(4,4,4,4,4,4,4,4,4,4,4,4)}
     match position with
     |North -> {state = Northturn ; northplayer = reco;southplayer=reco}
     |South->  {state = Southturn ; northplayer = reco;southplayer = reco}
