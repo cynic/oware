@@ -74,8 +74,27 @@ let getSeeds n board = // failwith "Not implemented"
 //useHouse, which accepts a house number and a board,
 //and makes a move using
 //that house.
-let useHouse n board = failwith "Not implemented"
-                      
+let useHouse n board = // failwith "Not implemented"
+         let (a, b,c,d,e,f ) = board.southplayer.houses 
+         let (a',b',c',d',e',f')= board.northplayer.houses 
+         let k = board.southplayer in
+              match n with 
+              | 1 ->let v =  {k with houses = (a-4, b+1,c+1,d+1,e+1,f) } in
+                         board
+                            
+            //|2->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|3->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|4->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|5->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|6->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|7->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|8->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|9->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|10->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|11->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+            //|12->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
+              | _ ->  failwith "Not implemented"
+
             
 //-------------------------------------------------
 //start, which accepts a StartingPosition and returns 
