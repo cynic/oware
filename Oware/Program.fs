@@ -47,27 +47,26 @@ let getSeeds n board = // failwith "Not implemented"
 //useHouse, which accepts a house number and a board,
 //and makes a move using
 //that house.
+
+
 let useHouse n board = // failwith "Not implemented"
+         
          let (a, b,c,d,e,f ) = board.southplayer.houses 
          let (a',b',c',d',e',f')= board.northplayer.houses 
-         let k = board.southplayer in
-              match n with 
-            //  | 1 ->let v =  {k with houses = (a-4, b+1,c+1,d+1,e+1,f) } in
-            //             board
-              |1->{ board.southplayer.houses = (a-4, b+1,c+1,d+1,e+1,f)}
-                    board
-            //|2->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|3->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|4->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|5->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|6->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|7->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|8->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|9->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|10->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|11->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-            //|12->{k with houses = (a-4, b+1,c+1,d+1,e+1,f ) }
-              | _ ->  failwith "Not implemented"
+         //new board
+         let {state=S;northplayer=north1;southplayer=south1}= board
+         let rec iterate numberofseeds acc =
+            match numberofseeds>=0 with
+            |true-> iterate (numberofseeds-1) acc+1       
+            |_-> 0
+         iterate (getSeeds n board) 0
+
+
+
+
+       
+            
+        
                      
 
 //start, which accepts a StartingPosition and returns 
@@ -96,3 +95,10 @@ let gameState board = failwith "Not implemented"
 let main _ =
     printfn "Hello from F#!"
     0 // return an integer exit code
+
+    //  let rec count v acc=
+    //        match v>0 with
+    //        |true ->count (v+1) (acc+1)
+    //        |_ -> acc
+   //      count (getSeeds n board) 0
+       
