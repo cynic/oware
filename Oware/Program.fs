@@ -14,7 +14,7 @@ type Board={
     }
 
 let getSeeds n board = 
-    (a,b,c,d,e,f,A,B,C,D,E,F) = board
+    let (a,b,c,d,e,f,A,B,C,D,E,F) = board
     match n with
     | 1 -> a
     | 2 -> b
@@ -30,13 +30,15 @@ let getSeeds n board =
     | 12 -> F
     | _ -> failwith "Invalid number on board"
 
-let useHouse n board = 
+
+let useHouse n board = failwith "Not implemented"
 
 let start position = 
     match position with
     | North -> North
     | South -> South 
     | _ -> failwith "Invalid starting position"
+
 
 let score board = failwith "Not implemented"
 
