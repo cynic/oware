@@ -14,20 +14,11 @@ type Board={
     }
 
 let getSeeds n board = 
-    let (a,b,c,d,e,f,A,B,C,D,E,F) = board
-    match n with
-    | 1 -> a
-    | 2 -> b
-    | 3 -> c
-    | 4 -> d
-    | 5 -> e
-    | 6 -> f 
-    | 7 -> A
-    | 8 -> B
-    | 9 -> C
-    | 10 -> D
-    | 11 -> E
-    | 12 -> F
+    match board with
+    | northplayer -> function
+        | 1 -> 'a| 2 -> 'b | 3 -> 'c | 4 -> 'd | 5 -> 'e | 6 -> 'f | _ -> failwith "Invalid number on board"   
+    | southplayer -> function
+        | 7 -> 'A | 8 -> 'B | 9 -> 'C | 10 -> 'D | 11 -> 'E | 12 -> 'F | _ -> failwith "Invalid number on board"
     | _ -> failwith "Invalid number on board"
 
 
