@@ -10,7 +10,7 @@ type Board = {
     }
 
 let getSeeds n board = 
-    let h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12 = board.houses
+    let (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12) = board.houses
     match n with
     | 1 -> h1| 2 -> h2 | 3 -> h3 | 4 -> h4 | 5 -> h5 | 6 -> h6 |
     | 7 -> h7 | 8 -> h8 | 9 -> h9 | 10 -> h10 | 11 -> h11 | 12 -> h12 | _ -> failwith "Invalid number on board"
@@ -42,28 +42,27 @@ let harvest house_num board num_seeds = //harvest seeds
     
 
 let useHouse n board = 
-    let (North_seeds,South_seeds) = board.score
     let numseeds = getSeeds n board
   //  match numseeds > 0 with
     //|true -> plant_or_harvest 0 board n //set select house number of seeds to zero
   //|false -> failwith "No seeds in the selected house"
-    let rec plantseeds seeds updateboard house_num score =
+    let rec plantseeds seeds updateboard house_num =
         match seeds > 0 with //are there still seeds left to plant?
         | true -> //planting
             let numseeds = getSeeds house_num updateboard
             match house_num with //if house number  = 12 next house_num = 1
-            | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 score
-            | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) score
+            | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
+            | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
         | false -> //work back through planted houses
-            match getSeeds (house_num-1) board.houses with //does the last house we planted in contain two or three seeds?
+            match getSeeds (house_num-1) board with //does the last house we planted in contain two or three seeds?
             | 3 -> match (house_num-1) with //loop through houses if house num = 1 then next house must be house 12
-                   |0 -> plantseeds seeds (plant_or_harvest 0 updateboard (house_num-1)) 12 (harvest (house_num-1) updateboard 3)
-                   |_ -> plantseeds seeds (plant_or_harvest 0 updateboard (house_num-1)) (house_num-1) (harvest (house_num-1) updateboard 3)
+                   |1 -> plantseeds seeds (plant_or_harvest 0 (harvest (house_num-1) updateboard 3) (house_num-1)) 12)
+                   |_ -> plantseeds seeds (plant_or_harvest 0 (harvest (house_num-1) updateboard 3) (house_num-1)) (house_num-1) 
             | 2 -> match (house_num-1) with
-                    |0 -> plantseeds seeds (plant_or_harvest 0 updateboard (house_num-1)) 12 (harvest (house_num-1) updateboard 2)
-                    |_ -> plantseeds seeds (plant_or_harvest 0 updateboard (house_num-1)) (house_num-1) (harvest (house_num-1) updateboard 2)
+                    |1 -> plantseeds seeds (plant_or_harvest 0 (harvest (house_num-1) updateboard 2) (house_num-1)) 12 
+                    |_ -> plantseeds seeds (plant_or_harvest 0 (harvest (house_num-1) updateboard 3) (house_num-1)) (house_num-1)  
             | _ -> updateboard 
-    plantseeds numseeds board n board.score
+    plantseeds(numseeds board n) 
     
 
 
@@ -86,8 +85,8 @@ let gameState board = failwith "Not implemented"
 
 [<EntryPoint>]
 let main _ =
-    let b = { Board.Houses = (4,4,4,4,4,4,4,4,4,4,4,4);
-        score = (0,0) }
-    useHouse 2 b.Houses 
+    let b = { Board.houses = (4,4,4,4,4,4,4,4,4,4,4,4);
+        Board.score = (0,0) }
+    let b = useHouse 2 b 
     printfn "Hello from F#!"
     0 // return an integer exit code
