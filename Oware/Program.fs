@@ -10,12 +10,10 @@ type Board = {
     }
 
 let getSeeds n board = 
-    match board with
-    | northplayer -> function
-        | 1 -> 'a| 2 -> 'b | 3 -> 'c | 4 -> 'd | 5 -> 'e | 6 -> 'f | _ -> failwith "Invalid number on board"   
-    | southplayer -> function
-        | 7 -> 'A | 8 -> 'B | 9 -> 'C | 10 -> 'D | 11 -> 'E | 12 -> 'F | _ -> failwith "Invalid number on board"
-    | _ -> failwith "Invalid number on board"
+    let h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12 = board.houses
+    match n with
+    | 1 -> h1| 2 -> h2 | 3 -> h3 | 4 -> h4 | 5 -> h5 | 6 -> h6 |
+    | 7 -> h7 | 8 -> h8 | 9 -> h9 | 10 -> h10 | 11 -> h11 | 12 -> h12 | _ -> failwith "Invalid number on board"
 
 //used with useHouse
 let plant_or_harvest n board house_num = //n= number of seeds meant to be in the specified house number
@@ -76,10 +74,10 @@ let useHouse n board =
 
     
 let start position = 
+    let intial = {houses=(4,4,4,4,4,4,4,4,4,4,4,4);score=(0,0)}
     match position with
-    | North -> North
-    | South -> South 
-    | _ -> failwith "Invalid starting position"
+    | North | South -> intial
+    | _ -> failwith"Inavlid position"
 
 
 let score board = failwith "Not implemented"
