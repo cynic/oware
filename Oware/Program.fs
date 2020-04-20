@@ -6,7 +6,7 @@ type StartingPosition =
 
 type Board = {
     houses: int*int*int*int*int*int*int*int*int*int*int*int
-    score : int*int
+    score : int*int // (south, north)
     }
 
 let getSeeds n board = 
@@ -17,27 +17,58 @@ let getSeeds n board =
         | 7 -> 'A | 8 -> 'B | 9 -> 'C | 10 -> 'D | 11 -> 'E | 12 -> 'F | _ -> failwith "Invalid number on board"
     | _ -> failwith "Invalid number on board"
 
+//used with useHouse
+let plant_or_harvest n board house_num = //n= number of seeds meant to be in the specified house number
+    let (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12) = board.houses
+    match house_num with
+    | 1 -> {board with houses = (n,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12)} 
+    | 2 -> {board with houses = (h1,n,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12)} 
+    | 3 -> {board with houses = (h1,h2,n,h4,h5,h6,h7,h8,h9,h10,h11,h12)} 
+    | 4 -> {board with houses = (h1,h2,h3,n,h5,h6,h7,h8,h9,h10,h11,h12)} 
+    | 5 -> {board with houses = (h1,h2,h3,h4,n,h6,h7,h8,h9,h10,h11,h12)} 
+    | 6 -> {board with houses = (h1,h2,h3,h4,h5,n,h7,h8,h9,h10,h11,h12)} 
+    | 7 -> {board with houses = (h1,h2,h3,h4,h5,h6,n,h8,h9,h10,h11,h12)} 
+    | 8 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,n,h9,h10,h11,h12)} 
+    | 9 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,n,h10,h11,h12)} 
+    |10 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,n,h11,h12)} 
+    |11 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,n,h12)} 
+    |12 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,n)} 
+    |_ -> failwith "Invalid house number"
+
+let harvest house_num board num_seeds = //harvest seeds
+    let (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12) = board.houses
+    let (South_seeds, North_seeds) = board.score 
+    match gameState board with
+    |"South's turn" -> {board with score = (South_seeds+num_seeds, North_seeds)}
+    |"Norths's turn" -> {board with score = (South_seeds, North_seeds+num_seeds)}
+    
 
 let useHouse n board = 
-    let (h1',h2',h3',h4',h5',h6',h7',h8',h9',h10',h11',h12') = board.houses
+    let (North_seeds,South_seeds) = board.score
     let numseeds = getSeeds n board
-    let rec plantseeds seeds updateboard house_num =
-        match seeds > 0 with
-        | true -> 
-            match house_num with
-            | 1 -> plantseeds (seeds-1) {board with houses = ((h1+1),h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12)} (house_num+1)
-            | 2 -> plantseeds (seeds-1) {board with houses = (h1,(h2+1),h3,h4,h5,h6,h7,h8,h9,h10,h11,h12)} (house_num+1)
-            | 3 -> plantseeds (seeds-1) {board with houses = (h1,h2,(h3+1),h4,h5,h6,h7,h8,h9,h10,h11,h12)} (house_num + 1)
-            | 4 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,(h4+1),h5,h6,h7,h8,h9,h10,h11,h12)} (house_num + 1)
-            | 5 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,h4,(h5+1),h6,h7,h8,h9,h10,h11,h12)} (house_num + 1)
-            | 6 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,h4,h5,(h6+1),h7,h8,h9,h10,h11,h12)} (house_num + 1)
-            | 7 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,h4,h5,h6,(h7+1),h8,h9,h10,h11,h12)} (house_num + 1)
-            | 8 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,h4,h5,h6,h7,(h8+1),h9,h10,h11,h12)} (house_num + 1)
-            | 9 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,(h9+1),h10,h11,h12)} (house_num + 1)
-            |10 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,(h10+1),h11,h12)} (house_num + 1)
-            |11 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,(h11+1),h12)} (house_num + 1)
-            |12 -> plantseeds (seeds-1) {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,(h12+1))} 1
-        | false -> //check if we can collect seeds 
+  //  match numseeds > 0 with
+    //|true -> plant_or_harvest 0 board n //set select house number of seeds to zero
+  //|false -> failwith "No seeds in the selected house"
+    let rec plantseeds seeds updateboard house_num score =
+        match seeds > 0 with //are there still seeds left to plant?
+        | true -> //planting
+            let numseeds = getSeeds house_num updateboard
+            match house_num with //if house number  = 12 next house_num = 1
+            | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 score
+            | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) score
+        | false -> //work back through planted houses
+            match getSeeds (house_num-1) board.houses with //does the last house we planted in contain two or three seeds?
+            | 3 -> match (house_num-1) with //loop through houses if house num = 1 then next house must be house 12
+                   |0 -> plantseeds seeds (plant_or_harvest 0 updateboard (house_num-1)) 12 (harvest (house_num-1) updateboard 3)
+                   |_ -> plantseeds seeds (plant_or_harvest 0 updateboard (house_num-1)) (house_num-1) (harvest (house_num-1) updateboard 3)
+            | 2 -> match (house_num-1) with
+                    |0 -> plantseeds seeds (plant_or_harvest 0 updateboard (house_num-1)) 12 (harvest (house_num-1) updateboard 2)
+                    |_ -> plantseeds seeds (plant_or_harvest 0 updateboard (house_num-1)) (house_num-1) (harvest (house_num-1) updateboard 2)
+            | _ -> updateboard 
+    plantseeds numseeds board n board.score
+    
+
+
 
 
 
