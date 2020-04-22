@@ -16,6 +16,8 @@ let getSeeds n board =
     | 1 -> h1| 2 -> h2 | 3 -> h3 | 4 -> h4 | 5 -> h5 | 6 -> h6 
     | 7 -> h7 | 8 -> h8 | 9 -> h9 | 10 -> h10 | 11 -> h11 | 12 -> h12 | _ -> failwith "Invalid number on board"
 
+let gameState board = failwith "Not implemented"
+
 //used with useHouse
 let plant_or_harvest n board house_num = //n= number of seeds meant to be in the specified house number
     let (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12) = board.houses
@@ -43,12 +45,14 @@ let harvest board num_seeds = //harvest seeds
 
 let valid_house_selected house_num board = //checkes if the player selected a valid house belonging to them and the house has seeds in it
     match gameState board with
-    |"South's turn" -> match house_num>=1 && house_num <=6 && getSeeds house_num board > 0  with
-                       | true -> true
-                       | false -> false
-    |"Norths's turn" -> match house_num>=7 && house_num <=12 && getSeeds house_num board > 0 with
-                        | true -> true
-                        | false -> false
+    |"South's turn" -> 
+        match house_num>=1 && house_num <=6 && getSeeds house_num board > 0  with
+        | true -> true
+        | false -> false
+    |"Norths's turn" -> 
+        match house_num>=7 && house_num <=12 && getSeeds house_num board > 0 with
+            | true -> true
+            | false -> false
     | _ -> false
 
 
@@ -77,7 +81,6 @@ let useHouse n board =
     | true -> plantseeds numseeds board n //start recursive function
     | false -> failwith "Invalid house selected"
 
-    
 
 
 
@@ -86,21 +89,18 @@ let useHouse n board =
 
 
     
+
 let start position = 
-    let intial = {houses=(4,4,4,4,4,4,4,4,4,4,4,4);score=(0,0)}
+    let initial = {houses=(4,4,4,4,4,4,4,4,4,4,4,4);score=(0,0); turn=true}
     match position with
-    | North | South -> intial
-    | _ -> failwith"Inavlid position"
+    | North -> {initial with turn=false}
+    | South -> {initial with turn=true}
 
-
-let score board = failwith "Not implemented"
-
-let gameState board = failwith "Not implemented"
+let score board = board.score
 
 [<EntryPoint>]
 let main _ =
-    let b = { Board.houses = (4,4,4,4,4,4,4,4,4,4,4,4);
-        Board.score = (0,0) }
-    let b = useHouse 2 b 
+    let game = start North
+    let b = useHouse 2 game 
     printfn "Hello from F#!"
     0 // return an integer exit code
