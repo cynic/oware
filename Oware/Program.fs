@@ -16,7 +16,16 @@ let getSeeds n board =
     | 1 -> h1| 2 -> h2 | 3 -> h3 | 4 -> h4 | 5 -> h5 | 6 -> h6 
     | 7 -> h7 | 8 -> h8 | 9 -> h9 | 10 -> h10 | 11 -> h11 | 12 -> h12 | _ -> failwith "Invalid number on board"
 
-let gameState board = failwith "Not implemented"
+let gameState board =  //Checks the state of the game and returns the state at which the game is in
+    let (northplayer,southplayer) = board.score 
+    match (northplayer=24 && southplayer=24),(northplayer>24 && southplayer<24),(northplayer<24 && southplayer>24) with
+    | (true, false,false) -> "Game ended in a draw"
+    | (false,true,false) -> "North won"
+    | (false,false,true) -> "South won"
+    | _ ->
+        match board.turn with
+        | false-> "North's turn"
+        | true -> "South's turn"
 
 //used with useHouse
 let plant_or_harvest n board house_num = //n= number of seeds meant to be in the specified house number
