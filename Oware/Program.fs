@@ -67,6 +67,7 @@ let valid_house_selected house_num board = //checkes if the player selected a va
 
 let useHouse n board = 
     let numseeds = getSeeds n board
+    
   //  match numseeds > 0 with
     //|true -> plant_or_harvest 0 board n //set select house number of seeds to zero
   //|false -> failwith "No seeds in the selected house"
@@ -87,7 +88,9 @@ let useHouse n board =
                     |_ -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 3) (house_num-1)) (house_num-1)  
             | _ -> updateboard 
     match (valid_house_selected n board) with
-    | true -> plantseeds numseeds board n //start recursive function
+    | true -> 
+            let board = plant_or_harvest 0 board n
+            plantseeds numseeds board (n+1) //start recursive function
     | false -> failwith "Invalid house selected"
 
 
