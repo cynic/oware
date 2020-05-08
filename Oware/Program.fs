@@ -7,7 +7,7 @@ type StartingPosition =
 type Board = {
     houses: int*int*int*int*int*int*int*int*int*int*int*int  //Houses 1-12  Houses 1-6 belong to South player and Houses 7-12 belong to North player
     score : int*int // (south, north)
-    turn : int //checks whos turn it is true = South's turn whereas false = North's turn
+    turn : int //checks whos turn it is -1 = South's turn whereas 1 = North's turn
     }
 
 let getSeeds n board = 
@@ -25,7 +25,7 @@ let gameState board =  //Checks the state of the game and returns the state at w
     | _ ->
         match board.turn with
         | 1 -> "North's turn"
-        | (-1) -> "South's turn"
+        | -1 -> "South's turn"
         | _ -> failwith "invalid"
 
 //used with useHouse
@@ -46,7 +46,7 @@ let plant_or_harvest n board house_num = //n= number of seeds meant to be in the
     |12 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,n)} 
     |_ -> failwith "Invalid house number"
 
-let harvest board num_seeds = //harvest seeds
+let harvest board num_seeds house_num = //harvest seeds
     let (South_seeds, North_seeds) = board.score 
     match gameState board with
     |"South's turn" -> {board with score = (South_seeds+num_seeds, North_seeds)}
@@ -68,9 +68,11 @@ let valid_house_selected house_num board = //checkes if the player selected a va
 
 let useHouse n board = 
     //let board=board.turn*(-1)
+    
     match valid_house_selected n board with
     | true -> 
         let numseeds = getSeeds n board
+        
         let rec plantseeds seeds updateboard house_num =
             match seeds > 0 with //are there still seeds left to plant?
             | true -> //planting
@@ -82,15 +84,16 @@ let useHouse n board =
                 match (house_num-1) with
                 |0 -> 
                     match getSeeds 12 board with //does the last house we planted in contain two or three seeds?
-                    | 3 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 3) (house_num-1)) 12 
-                    | 2 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 2) (house_num-1)) 12      
-                    | _ -> updateboard 
+                    | 3 -> plantseeds seeds (harvest updateboard 3 12) 12 
+                    | 2 -> plantseeds seeds (harvest updateboard 2 12) 12      
+                    | _ -> {updateboard with turn = board.turn*(-1)}
                 |_ -> 
                     match getSeeds (house_num-1) board with //does the last house we planted in contain two or three seeds?
-                    | 3 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 3) (house_num-1)) (house_num-1) 
-                    | 2 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 2) (house_num-1)) (house_num-1)  
-                    | _ -> updateboard 
+                    | 3 -> plantseeds seeds (harvest updateboard 3 (house_num-1)) (house_num-1) 
+                    | 2 -> plantseeds seeds (harvest updateboard 2 (house_num-1)) (house_num-1)  
+                    | _ -> {updateboard with turn = board.turn*(-1)}
         let board = plant_or_harvest 0 board n
+        //let board = {board with turn = board.turn*(-1)}
         match (n+1)>12 with
         |false -> plantseeds numseeds board (n+1) //start recursive function
         |true -> plantseeds numseeds board (1) //start recursive function
@@ -114,7 +117,7 @@ let printBoard board= //mini print function for testing
 
   
 let start position = 
-    let initial = {houses=(4,4,4,4,4,4,4,4,4,4,4,4);score=(0,0); turn=0}
+    let initial = {houses=(4,4,4,4,4,4,4,4,4,4,4,4);score=(0,0); turn= -1}
     match position with
     | North -> {initial with turn=1}
     | South -> {initial with turn=(-1)}
@@ -122,13 +125,5 @@ let start position =
 let score board = board.score
 
 [<EntryPoint>]
-let main _ =
-    let game = start South
-    let b = useHouse 1 game 
-    printBoard(b)
-    printfn("\n\n\n")
-    let game2 = start North
-    let b2 = useHouse 7 game2
-    printBoard(b2)
-    printfn("\n\n\n")
+let main _ = 
     0 // return an integer exit code
