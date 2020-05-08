@@ -66,31 +66,34 @@ let valid_house_selected house_num board = //checkes if the player selected a va
 
 
 let useHouse n board = 
-    let numseeds = getSeeds n board
-    let rec plantseeds seeds updateboard house_num =
-        match seeds > 0 with //are there still seeds left to plant?
-        | true -> //planting
-            let numseeds = getSeeds house_num updateboard
-            match house_num with //if house number  = 12 next house_num = 1
-            | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
-            | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
-        | false -> //work back through planted houses
-            match (house_num-1) with
-            |0 -> 
-                match getSeeds 12 board with //does the last house we planted in contain two or three seeds?
-                | 3 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 3) (house_num-1)) 12 
-                | 2 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 2) (house_num-1)) 12      
-                | _ -> updateboard 
-            |_ -> 
-                match getSeeds (house_num-1) board with //does the last house we planted in contain two or three seeds?
-                | 3 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 3) (house_num-1)) (house_num-1) 
-                | 2 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 2) (house_num-1)) (house_num-1)  
-                | _ -> updateboard 
-    let board = plant_or_harvest 0 board n
-    match (n+1)>12 with
-    |false -> plantseeds numseeds board (n+1) //start recursive function
-    |true -> plantseeds numseeds board (1) //start recursive function
-
+    match (valid_house_selected n board) with //added this to check if the turn is correct
+    | true ->
+        let numseeds = getSeeds n board
+        let rec plantseeds seeds updateboard house_num =
+            match seeds > 0 with //are there still seeds left to plant?
+            | true -> //planting
+                let numseeds = getSeeds house_num updateboard
+                match house_num with //if house number  = 12 next house_num = 1
+                | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
+                | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
+            | false -> //work back through planted houses
+                match (house_num-1) with
+                |0 -> 
+                    match getSeeds 12 board with //does the last house we planted in contain two or three seeds?
+                    | 3 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 3) (house_num-1)) 12 
+                    | 2 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 2) (house_num-1)) 12      
+                    | _ -> updateboard 
+                |_ -> 
+                    match getSeeds (house_num-1) board with //does the last house we planted in contain two or three seeds?
+                    | 3 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 3) (house_num-1)) (house_num-1) 
+                    | 2 -> plantseeds seeds (plant_or_harvest 0 (harvest updateboard 2) (house_num-1)) (house_num-1)  
+                    | _ -> updateboard 
+        let board = plant_or_harvest 0 board n
+        match (n+1)>12 with
+        |false -> plantseeds numseeds board (n+1) //start recursive function
+        |true -> plantseeds numseeds board (1) //start recursive function
+    | false -> board 
+    
 
 
 
@@ -117,8 +120,8 @@ let score board = board.score
 
 [<EntryPoint>]
 let main _ =
-    let game = start North
-    let b = useHouse 8 game 
+    let game = start South
+    let b = useHouse 7 game 
     printfn "Hello from F#!"
     printBoard(b)
     0 // return an integer exit code
