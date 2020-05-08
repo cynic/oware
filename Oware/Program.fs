@@ -7,7 +7,7 @@ type StartingPosition =
 type Board = {
     houses: int*int*int*int*int*int*int*int*int*int*int*int  //Houses 1-12  Houses 1-6 belong to South player and Houses 7-12 belong to North player
     score : int*int // (south, north)
-    turn : bool //checks whos turn it is true = South's turn whereas false = North's turn
+    turn : int //checks whos turn it is true = South's turn whereas false = North's turn
     }
 
 let getSeeds n board = 
@@ -24,8 +24,9 @@ let gameState board =  //Checks the state of the game and returns the state at w
     | (false,false,true) -> "South won"
     | _ ->
         match board.turn with
-        | false-> "North's turn"
-        | true -> "South's turn"
+        | 1 -> "North's turn"
+        | (-1) -> "South's turn"
+        | _ -> failwith "invalid"
 
 //used with useHouse
 let plant_or_harvest n board house_num = //n= number of seeds meant to be in the specified house number
@@ -53,12 +54,12 @@ let harvest board num_seeds = //harvest seeds
     | _ -> failwith "Game has ended or error somewhere"
 
 let valid_house_selected house_num board = //checkes if the player selected a valid house belonging to them and the house has seeds in it
-    match gameState board with
-    |"South's turn" -> 
+    match board.turn with
+    | -1 -> 
         match house_num>=1 && house_num <=6 && getSeeds house_num board > 0  with
         | true -> true
         | false -> false
-    |"Norths's turn" -> 
+    | 1 -> 
         match house_num>=7 && house_num <=12 && getSeeds house_num board > 0 with
             | true -> true
             | false -> false
@@ -66,8 +67,9 @@ let valid_house_selected house_num board = //checkes if the player selected a va
 
 
 let useHouse n board = 
-    match (valid_house_selected n board) with //added this to check if the turn is correct
-    | true ->
+    //let board=board.turn*(-1)
+    match valid_house_selected n board with
+    | true -> 
         let numseeds = getSeeds n board
         let rec plantseeds seeds updateboard house_num =
             match seeds > 0 with //are there still seeds left to plant?
@@ -92,7 +94,8 @@ let useHouse n board =
         match (n+1)>12 with
         |false -> plantseeds numseeds board (n+1) //start recursive function
         |true -> plantseeds numseeds board (1) //start recursive function
-    | false -> board 
+    | false -> board
+    
     
 
 
@@ -111,17 +114,21 @@ let printBoard board= //mini print function for testing
 
   
 let start position = 
-    let initial = {houses=(4,4,4,4,4,4,4,4,4,4,4,4);score=(0,0); turn=true}
+    let initial = {houses=(4,4,4,4,4,4,4,4,4,4,4,4);score=(0,0); turn=0}
     match position with
-    | North -> {initial with turn=false}
-    | South -> {initial with turn=true}
+    | North -> {initial with turn=1}
+    | South -> {initial with turn=(-1)}
 
 let score board = board.score
 
 [<EntryPoint>]
 let main _ =
     let game = start South
-    let b = useHouse 7 game 
-    printfn "Hello from F#!"
+    let b = useHouse 1 game 
     printBoard(b)
+    printfn("\n\n\n")
+    let game2 = start North
+    let b2 = useHouse 7 game2
+    printBoard(b2)
+    printfn("\n\n\n")
     0 // return an integer exit code
