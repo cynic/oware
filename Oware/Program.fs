@@ -74,6 +74,7 @@ let harvest board num_seeds house_num = //harvest seeds
     let (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12) = board.houses
     let (South_seeds, North_seeds) = board.score 
     let n = 0
+   // printfn ("GHere: %d") num_seeds
     match board.turn with
     | -1 -> 
         match house_num with
@@ -140,7 +141,7 @@ let useHouse n board =
                 match house_num with //if house number  = 12 next house_num = 1
                 | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
                 | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
-            | false -> harvestor updateboard (house_num-1)//work back through planted houses
+            | false -> harvestor updateboard (house_num - 1)//work back through planted houses
         let board = plant_or_harvest 0 board n
         //let board = {board with turn = board.turn*(-1)}
         match (n+1)>12 with
@@ -148,6 +149,8 @@ let useHouse n board =
         |true -> plantseeds numseeds board (1) //start recursive function
     | false -> board
     
+
+
 
 let printBoard board= //mini print function for testing
     let i = 1
@@ -173,16 +176,32 @@ let start position =
     | North -> {initial with turn=1}
     | South -> {initial with turn=(-1)}
 
+let printScore board =
+    let i = 1
+    let rec printer i board =
+        match i<3 with
+        |true ->
+            let x = getScore i board
+            printer (i+1) board
+            printfn "Player %d: %d" i x
+        |false -> ()
+    printer i board
+
 let score board = board.score
 
 [<EntryPoint>]
 let main _ = 
-   
    let playGame numbers =
        let rec play xs game =
+           printBoard game
+           printfn ("\n")
+           printScore game
+           printfn("\n")
            match xs with
            | [] -> game
            | x::xs -> play xs (useHouse x game)
        play numbers (start South)
-   //let game = playGame [2; 11; 3; 10; 4; 12; 1; 8; 6; 7; 5; 12; 2; 11; 1; 10]
+   let game = playGame [2; 11; 3; 10; 4; 12; 1; 8; 6; 7; 5; 12; 2; 11; 1; 10]//[2; 11; 3; 10; 4; 12; 1; 8; 6; 7; 5; 12; 2; 11; 1; 10]
+   printBoard game
+   printScore game
    0 // return an integer exit code
