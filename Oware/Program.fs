@@ -83,7 +83,7 @@ let valid_house_selected house_num board = //checkes if the player selected a va
 let harvest board num_seeds house_num = //harvest seeds
     let (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12) = board.houses
     let (South_seeds, North_seeds) = board.score 
-    let n = 0
+
    // printfn ("GHere: %d") num_seeds
     match board.turn with
     | -1 -> 
@@ -136,26 +136,69 @@ let harvestor board house_num =
             | _ -> {updateboard with turn = board.turn*(-1)}
     harvesting board house_num
 
+let give_opponent_pieces board = 
+    match board.turn with
+    | -1 -> 
+        let rec check_houses house_num k =
+            match house_num>=1 with
+            | true -> 
+                match (getSeeds house_num board)>=k with
+                | true -> house_num
+                | false -> check_houses (house_num-1) (k+1)
+            | false -> failwith "Cannot play to give opponent pieces" 
+        check_houses 6 1
+    | 1 -> 
+        let rec check_houses house_num k =
+            match house_num>=7 with
+            | true -> 
+                match (getSeeds house_num board)>=k with
+                | true -> house_num
+                | false -> check_houses (house_num-1) (k+1)
+            | false -> failwith "Cannot play to give opponent pieces"
+        check_houses 12 1
+    | _ -> failwith "Invalid turn"    
+    
+
 let useHouse n board = 
-    match valid_house_selected n board with
-    | true -> 
-        let numseeds = getSeeds n board
-        let rec plantseeds seeds updateboard house_num =
-            match seeds > 0 with //are there still seeds left to plant?
-            | true -> //planting
-                let numseeds = getSeeds house_num updateboard
-                match house_num with //if house number  = 12 next house_num = 1
-                | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
-                | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
-            | false ->
-                printfn ("Here Seed at %d") house_num
-                harvestor updateboard (house_num-1)//work back through planted houses
-        let board = plant_or_harvest 0 board n
-        //let board = {board with turn = board.turn*(-1)}
-        match (n+1)>12 with
-        |false -> plantseeds numseeds board (n+1) //start recursive function
-        |true -> plantseeds numseeds board (1) //start recursive function
-    | false -> board
+    match check_player_seeds board with 
+    | true ->
+        match valid_house_selected n board with
+        | true -> 
+            let numseeds = getSeeds n board
+            let rec plantseeds seeds updateboard house_num =
+                match seeds > 0 with //are there still seeds left to plant?
+                | true -> //planting
+                    let numseeds = getSeeds house_num updateboard
+                    match house_num with //if house number  = 12 next house_num = 1
+                    | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
+                    | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
+                | false ->
+                    printfn ("Here Seed at %d") house_num
+                    harvestor updateboard (house_num-1)//work back through planted houses
+            let board = plant_or_harvest 0 board n
+            //let board = {board with turn = board.turn*(-1)}
+            match (n+1)>12 with
+            |false -> plantseeds numseeds board (n+1) //start recursive function
+            |true -> plantseeds numseeds board (1) //start recursive function
+        | false -> board
+    | false -> 
+        let n = give_opponent_pieces board
+        match valid_house_selected n board with
+        | true -> 
+            let numseeds = getSeeds n board
+            let rec plantseeds seeds updateboard house_num =
+                match seeds > 0 with //are there still seeds left to plant?
+                | true -> //planting
+                    let numseeds = getSeeds house_num updateboard
+                    match house_num with //if house number  = 12 next house_num = 1
+                    | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
+                    | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
+                | false ->
+                    printfn ("Here Seed at %d") house_num
+                    harvestor updateboard (house_num-1)//work back through planted houses
+            let board = plant_or_harvest 0 board n
+            plantseeds numseeds board n 
+        | false -> board
     
 
 
