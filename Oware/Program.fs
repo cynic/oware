@@ -20,8 +20,8 @@ let gameState board =  //Checks the state of the game and returns the state at w
     let (northplayer,southplayer) = board.score 
     match (northplayer=24 && southplayer=24),(northplayer>24 && southplayer<24),(northplayer<24 && southplayer>24) with
     | (true, false,false) -> "Game ended in a draw"
-    | (false,true,false) -> "North won"
-    | (false,false,true) -> "South won"
+    | (false,true,false) -> "South won" //Inverted 
+    | (false,false,true) -> "North won" //Inverted
     | _ ->
         match board.turn with
         | 1 -> "North's turn"
@@ -209,7 +209,9 @@ let main _ =
            | [] -> game
            | x::xs -> play xs (useHouse x game)
        play numbers (start South)
-   let game = playGame [2; 11; 3; 10; 4; 12; 1; 8; 6; 7; 5; 12; 2; 11; 1; 10]//[2; 11; 3; 10; 4; 12; 1; 8; 6; 7; 5; 12; 2; 11; 1; 10]
+   let game = playGame [1; 12; 3; 10; 5; 8; 1; 12; 3; 10; 4; 8; 2]//[2; 11; 3; 10; 4; 12; 1; 8; 6; 7; 5; 12; 2; 11; 1; 10]
    printBoard game
+   let x = gameState game
    printScore game
+   printfn("%s") x
    0 // return an integer exit code
