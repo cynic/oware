@@ -88,26 +88,26 @@ let harvest board num_seeds house_num = //harvest seeds
     match board.turn with
     | -1 -> 
         match house_num with
-        | 7 -> {board with houses = (h1,h2,h3,h4,h5,h6,n,h8,h9,h10,h11,h12); score = (South_seeds+num_seeds, North_seeds)} 
-        | 8 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,n,h9,h10,h11,h12); score = (South_seeds+num_seeds, North_seeds)} 
-        | 9 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,n,h10,h11,h12); score = (South_seeds+num_seeds, North_seeds)} 
-        |10 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,n,h11,h12); score = (South_seeds+num_seeds, North_seeds)} 
-        |11 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,n,h12); score = (South_seeds+num_seeds, North_seeds)} 
+        | 7 -> {board with houses = (h1,h2,h3,h4,h5,h6,0,h8,h9,h10,h11,h12); score = (South_seeds+num_seeds, North_seeds)} 
+        | 8 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,0,h9,h10,h11,h12); score = (South_seeds+num_seeds, North_seeds)} 
+        | 9 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,0,h10,h11,h12); score = (South_seeds+num_seeds, North_seeds)} 
+        |10 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,0,h11,h12); score = (South_seeds+num_seeds, North_seeds)} 
+        |11 -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,0,h12); score = (South_seeds+num_seeds, North_seeds)} 
         |12 -> 
             match check_player_seeds board with
-            |true -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,n); score = (South_seeds+num_seeds, North_seeds)} 
+            |true -> {board with houses = (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,0); score = (South_seeds+num_seeds, North_seeds)} 
             |false -> board
         |_ -> board //can't capture seeds from own side 
     | 1 -> 
         match house_num with
-        | 1 -> {board with houses = (n,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
-        | 2 -> {board with houses = (h1,n,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
-        | 3 -> {board with houses = (h1,h2,n,h4,h5,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
-        | 4 -> {board with houses = (h1,h2,h3,n,h5,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
-        | 5 -> {board with houses = (h1,h2,h3,h4,n,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
+        | 1 -> {board with houses = (0,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
+        | 2 -> {board with houses = (h1,0,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
+        | 3 -> {board with houses = (h1,h2,0,h4,h5,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
+        | 4 -> {board with houses = (h1,h2,h3,0,h5,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
+        | 5 -> {board with houses = (h1,h2,h3,h4,0,h6,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)} 
         | 6 ->
             match check_player_seeds board with
-            | true -> {board with houses = (h1,h2,h3,h4,h5,n,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)}
+            | true -> {board with houses = (h1,h2,h3,h4,h5,0,h7,h8,h9,h10,h11,h12); score = (South_seeds, North_seeds+num_seeds)}
             |false -> board
         | _ -> board //can't capture seeds from own side
     | _ -> board
@@ -118,19 +118,19 @@ let harvestor board house_num =
         |0 -> 
             match getSeeds 12 updateboard with //does the last house we planted in contain two or three seeds?
             | 3 ->
-                printfn("\nHere3     %d\n ") house_num
+                printfn("\nHere3     %d\n ") n
                 harvesting (harvest updateboard 3 12) (11) 
             | 2 ->
-                printfn("\nHere2     %d\n") house_num
+                printfn("\nHere2     %d\n") n
                 harvesting (harvest updateboard 2 12) (11)      
             | _ -> {updateboard with turn = board.turn*(-1)}
         |_ -> 
-            match getSeeds house_num updateboard with //does the last house we planted in contain two or three seeds?
+            match getSeeds n updateboard with //does the last house we planted in contain two or three seeds?
             | 3 ->
-                printfn("\nHere3     %d\n ") house_num
+                printfn("\nHere3     %d\n ") n
                 harvesting (harvest updateboard 3 n) (n-1) 
             | 2 ->
-                printfn("\nHere2     %d\n") house_num
+                printfn("\nHere2     %d\n") n
                 harvesting (harvest updateboard 2 n) (n-1)
                 
             | _ -> {updateboard with turn = board.turn*(-1)}
@@ -147,7 +147,9 @@ let useHouse n board =
                 match house_num with //if house number  = 12 next house_num = 1
                 | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
                 | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
-            | false -> harvestor updateboard (house_num-1)//work back through planted houses
+            | false ->
+                printfn ("Here Seed at %d") house_num
+                harvestor updateboard (house_num-1)//work back through planted houses
         let board = plant_or_harvest 0 board n
         //let board = {board with turn = board.turn*(-1)}
         match (n+1)>12 with
