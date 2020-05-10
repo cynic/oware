@@ -68,7 +68,17 @@ let check_player_seeds board =  //checks that a move of seeds in final house doe
         check_houses 1
     | _ -> failwith "Invalid turn"
         
-
+let valid_house_selected house_num board = //checkes if the player selected a valid house belonging to them and the house has seeds in it
+    match board.turn with
+    | -1 -> 
+        match house_num>=1 && house_num <=6 && getSeeds house_num board > 0  with
+        | true -> true
+        | false -> false
+    | 1 -> 
+        match house_num>=7 && house_num <=12 && getSeeds house_num board > 0 with
+            | true -> true
+            | false -> false
+    | _ -> false
     
 let harvest board num_seeds house_num = //harvest seeds
     let (h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12) = board.houses
@@ -107,28 +117,24 @@ let harvestor board house_num =
         match n with
         |0 -> 
             match getSeeds 12 updateboard with //does the last house we planted in contain two or three seeds?
-            | 3 -> harvesting (harvest updateboard 3 12) 12 
-            | 2 -> harvesting (harvest updateboard 2 12) 12      
+            | 3 ->
+                printfn("\nHere3     %d\n ") house_num
+                harvesting (harvest updateboard 3 12) (11) 
+            | 2 ->
+                printfn("\nHere2     %d\n") house_num
+                harvesting (harvest updateboard 2 12) (11)      
             | _ -> {updateboard with turn = board.turn*(-1)}
         |_ -> 
             match getSeeds house_num updateboard with //does the last house we planted in contain two or three seeds?
-            | 3 -> harvesting (harvest updateboard 3 n) (n-1) 
-            | 2 -> harvesting (harvest updateboard 2 n) (n-1)  
+            | 3 ->
+                printfn("\nHere3     %d\n ") house_num
+                harvesting (harvest updateboard 3 n) (n-1) 
+            | 2 ->
+                printfn("\nHere2     %d\n") house_num
+                harvesting (harvest updateboard 2 n) (n-1)
+                
             | _ -> {updateboard with turn = board.turn*(-1)}
     harvesting board house_num
-
-let valid_house_selected house_num board = //checkes if the player selected a valid house belonging to them and the house has seeds in it
-    match board.turn with
-    | -1 -> 
-        match house_num>=1 && house_num <=6 && getSeeds house_num board > 0  with
-        | true -> true
-        | false -> false
-    | 1 -> 
-        match house_num>=7 && house_num <=12 && getSeeds house_num board > 0 with
-            | true -> true
-            | false -> false
-    | _ -> false
-
 
 let useHouse n board = 
     match valid_house_selected n board with
@@ -141,7 +147,7 @@ let useHouse n board =
                 match house_num with //if house number  = 12 next house_num = 1
                 | 12 -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) 1 
                 | _ -> plantseeds (seeds-1) (plant_or_harvest (numseeds+1) updateboard house_num) (house_num+1) 
-            | false -> harvestor updateboard (house_num - 1)//work back through planted houses
+            | false -> harvestor updateboard (house_num-1)//work back through planted houses
         let board = plant_or_harvest 0 board n
         //let board = {board with turn = board.turn*(-1)}
         match (n+1)>12 with
